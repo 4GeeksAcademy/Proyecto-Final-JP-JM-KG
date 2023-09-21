@@ -1,17 +1,57 @@
+#! /usr/bin/env python3.6
+"""
+Python 3.6 or newer required.
+"""
+import json
+import os
+import stripe
+
+# This is your test secret API key.
+stripe.api_key = 'sk_test_51NsmVoC0CsOM1PKHgL03O1J5gRQsHuwhPFOpMJE5eV18j50NQkjEwhJjxzpeR7uwlcr80TAgg6Tce40d82x917hq00t8YLQ6BF'
+
 """
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
-from flask import Flask, request, jsonify, Blueprint
+from flask import Flask, request, jsonify, Blueprint,render_template,redirect
 from api.models import db, User, Product, Order, OrderProduct  
 from api.utils import generate_sitemap, APIException  
 from flask_jwt_extended import JWTManager, jwt_required, create_access_token
 
+
 api = Blueprint('api', __name__)
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='public',
+            static_url_path='', template_folder='public')
 app.config['JWT_SECRET_KEY'] = 'tu_clave_secreta'
 jwt = JWTManager(app) 
 
+def calculate_order_amount(items):
+    # Replace this constant with a calculation of the order's amount
+    # Calculate the order total on the server to prevent
+    # people from directly manipulating the amount on the client
+    return 1400
+
+
+
+@api.route('/create-checkout-session', methods=['POST'])
+def create_checkout_session():
+  session = stripe.checkout.Session.create(
+    line_items=[{
+      'price_data': {
+        'currency': 'usd',
+        'product_data': {
+          'name': 'T-shirt',
+        },
+        'unit_amount': 2000,
+      },
+      'quantity': 1,
+    }],
+    mode='payment',
+    success_url='http://localhost:4242/success',
+    cancel_url='http://localhost:4242/cancel',
+  )
+
+  return redirect(session.url, code=303)
 
 @api.route('/hello', methods=['POST', 'GET'])
 def handle_hello():
