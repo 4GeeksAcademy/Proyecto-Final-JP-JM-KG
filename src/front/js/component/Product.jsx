@@ -47,6 +47,7 @@ export const Product = (props) => {
         {/* <button onClick={handleAddToCart}>Add to Cart</button> */}
       </p>
 
+     
 
     </div>
 

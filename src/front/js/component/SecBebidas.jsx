@@ -8,6 +8,7 @@ import "../../styles/Stylecard.css";
 
 
 
+
 export const CardBebida = () => {
     const { store, actions } = useContext(Context);
     const [arrayCardBebidas, setArrayCardBebidas] = useState([])
@@ -64,6 +65,10 @@ export const CardBebida = () => {
                     })}
                 </Carousel>
             </div>
+
+            <form action="/create-checkout-session" method="POST">
+                <button type="submit">Checkout</button>
+            </form>
         </div>
 
 
