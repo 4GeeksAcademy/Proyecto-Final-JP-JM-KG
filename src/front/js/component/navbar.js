@@ -137,6 +137,13 @@ export const Navbar = () => {
       <nav className="navbar navbar-expand-lg navbar-light">
         <div className="w-100">
           <div className="navbar-header">CARRITO EL TATIN</div>
+          {store.isAdmin && (
+            <button className="nav-item  mt-2">
+              <Link to="/usuarioAdmin" className="nav-link text-black p-1">
+                Administrar
+              </Link>
+            </button>
+          )}
           <div className="mb-3 d-flex align-items-center justify-content-between w-100 position-relative">
             <div className="d-flex align-items-center">
               <img src={Logo} alt="Logo" className="logo" />
@@ -185,7 +192,7 @@ export const Navbar = () => {
                           <button className="item-decrement" onClick={() => handleDecrement(item.order_id)}>-</button>
                         </div>
                       ))
-                    ) : null} 
+                    ) : null}
                     {cart && cart.items && cart.items.length > 0 && (
                       <div className="cart-total">
                         Total: ${cart.totalCost}

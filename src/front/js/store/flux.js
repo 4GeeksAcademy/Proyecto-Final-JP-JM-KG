@@ -8,10 +8,11 @@ const getState = ({ getStore, getActions, setStore }) => {
 		store: {
 			/* ----------<productos>--------------- */
 
-
+			isAdmin: false,
 			datosPrueba: [],
 			modalData: [],
 			productos: [],
+			ordenes: [], 
 			carrito: [],
 			isAuthenticated: false,
 			token: null,
@@ -122,16 +123,24 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 			addProduct: async (productData) => {
 				try {
-					const response = await axios.post(process.env.BACKEND_URL + '/api/products', productData);
-					if (response.status === 200 || response.status === 201) {
-						console.log('Producto agregado exitosamente:', response.data);
-					} else {
-						console.log('Error al agregar el producto:', response);
-					}
+				 
+				  console.log('Datos que se enviarán:', productData);
+				  const response = await axios.post(process.env.BACKEND_URL + '/api/products', productData);
+				
+		
+				  if (response.status === 200 || response.status === 201) {
+					console.log('Producto agregado exitosamente:', response.data);
+				  } else {
+					console.log('Error al agregar el producto:', response);
+				  }
 				} catch (error) {
-					console.error('Hubo un problema con la petición:', error);
+				  console.error('Hubo un problema con la petición:', error);
 				}
-			},
+			  },
+
+			  
+			
+			  
 
 			agregarAlCarrito: (producto) => {
 				const store = getStore();
@@ -178,12 +187,16 @@ const getState = ({ getStore, getActions, setStore }) => {
 					localStorage.setItem("token", userData.access_token);
 					localStorage.setItem("email", email);
 
+					// Verifica si el usuario es administrador
+					const isAdmin = email === "admin@gmail.com" && password === "admin123";
+
 					// Actualizar el estado global
 					setStore({
 						isAuthenticated: true,
 						token: userData.access_token,
 						email,
-						userId: userData.id
+						userId: userData.id,
+						isAdmin
 					});
 
 					return true;
@@ -197,7 +210,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 				console.log("Ejecutando función logout");
 				localStorage.removeItem("token");
 				localStorage.removeItem("email");
-				setStore({ isAuthenticated: false, token: null, email: null });
+				setStore({ isAuthenticated: false, token: null, email: null});
+				setStore({ isAdmin: false });
 				CartStore.clearCart(); // Limpia el carrito
 			},
 			createOrder: async () => {
@@ -294,6 +308,53 @@ const getState = ({ getStore, getActions, setStore }) => {
 				setStore({ datosPrueba: data });
 				console.log(store.datosPrueba)
 			},
+
+
+
+		
+
+			obtenerUsuarios: async () => {
+				try {
+				  const response = await axios.get(`${process.env.BACKEND_URL}/api/users`);
+				  const usuarios = response.data;
+				  setStore({ usuarios }); // Actualiza el estado con los usuarios obtenidos
+				} catch (error) {
+				  console.error('Error al obtener usuarios:', error);
+				}
+			  },
+
+		
+
+			  eliminarUsuario: async (userId) => {
+				try {
+				  // Eliminar usuario en el backend
+				  await axios.delete(`${process.env.BACKEND_URL}/api/users/${userId}`);
+				  
+				  // Actualizar la lista de usuarios en el frontend
+				  const updatedUsuarios = store.usuarios.filter((usuario) => usuario.id !== userId);
+				  setStore({ usuarios: updatedUsuarios });
+			  
+				  console.log('Usuario eliminado exitosamente con ID:', userId);
+				} catch (error) {
+				  console.error('Error al eliminar el usuario:', error);
+				}
+			  },
+
+              eliminarProducto: async (productId) => {
+                try {
+                    await axios.delete(`${process.env.BACKEND_URL}/api/products/${productId}`);
+                    console.log('Producto eliminado exitosamente con ID:', productId);
+            
+                    // Actualiza la lista de productos en el frontend después de eliminar
+                    const store = getStore();
+                    const updatedProducts = store.productos.filter(producto => producto.id !== productId);
+                    setStore({ productos: updatedProducts });
+                } catch (error) {
+                    console.error('Error al eliminar el producto:', error);
+                }
+            },
+            
+		
 
 
 
