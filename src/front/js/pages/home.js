@@ -14,6 +14,7 @@ import { CardPromos } from "../component/SecPromos.jsx"
 import { Navbar } from "../component/navbar.js"
 import { CarruselInicio } from "../component/Carrusel_inicio.jsx"
 import { Extras_prod } from "../component/Extras_Productos.jsx"
+// import { CheckoutForm } from "../component/Check/CheckoutForm.jsx";
 
 
 
@@ -45,7 +46,8 @@ export const Home = () => {
 					<CardChivito />
 					<CardVianda />
 					<CardPlato />
-					<CardBebida />	
+					<CardBebida />
+					{/* <CheckoutForm /> */}
 				</div>
 			</div>
 		</div>

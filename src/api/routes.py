@@ -7,7 +7,7 @@ import os
 import stripe
 
 # This is your test secret API key.
-stripe.api_key = 'sk_test_51NsmVoC0CsOM1PKHgL03O1J5gRQsHuwhPFOpMJE5eV18j50NQkjEwhJjxzpeR7uwlcr80TAgg6Tce40d82x917hq00t8YLQ6BF'
+stripe.api_key = 'sk_test_51Nsr4fKXj5LWRngy31gxXDgOiRztmNpiBBmqDpLBRuqDHNdfDIbOG9aT56ZppZYviuhqit7eKlKFZnjmFwxgiyjZ00Jvx3IxRM'
 
 """
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
@@ -22,6 +22,7 @@ api = Blueprint('api', __name__)
 
 app = Flask(__name__, static_folder='public',
             static_url_path='', template_folder='public')
+
 app.config['JWT_SECRET_KEY'] = 'tu_clave_secreta'
 jwt = JWTManager(app) 
 
@@ -32,26 +33,25 @@ def calculate_order_amount(items):
     return 1400
 
 
+@api.route('/create-payment-intent', methods=['POST'])
+def create_payment():
+    try:
+        data = json.loads(request.data)
+        # Create a PaymentIntent with the order amount and currency
+        intent = stripe.PaymentIntent.create(
+            amount=calculate_order_amount(data['items']),
+            currency='mxn',
+            # In the latest version of the API, specifying the `automatic_payment_methods` parameter is optional because Stripe enables its functionality by default.
+            automatic_payment_methods={
+                'enabled': True,
+            },
+        )
+        return jsonify({
+            'clientSecret': intent['client_secret']
+        })
+    except Exception as e:
+        return jsonify(error=str(e)), 403
 
-@api.route('/create-checkout-session', methods=['POST'])
-def create_checkout_session():
-  session = stripe.checkout.Session.create(
-    line_items=[{
-      'price_data': {
-        'currency': 'usd',
-        'product_data': {
-          'name': 'T-shirt',
-        },
-        'unit_amount': 2000,
-      },
-      'quantity': 1,
-    }],
-    mode='payment',
-    success_url='http://localhost:4242/success',
-    cancel_url='http://localhost:4242/cancel',
-  )
-
-  return redirect(session.url, code=303)
 
 @api.route('/hello', methods=['POST', 'GET'])
 def handle_hello():

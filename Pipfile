@@ -20,6 +20,7 @@ flask-admin = "*"
 typing-extensions = "*"
 flask-jwt-extended = "*"
 stripe = "*"
+requests = "*"
 
 [requires]
 python_version = "3.10"

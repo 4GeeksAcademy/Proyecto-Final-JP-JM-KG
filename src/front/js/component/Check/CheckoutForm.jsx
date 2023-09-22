@@ -60,8 +60,7 @@ export default function CheckoutForm() {
       elements,
       confirmParams: {
         // Make sure to change this to your payment completion page
-        return_url: "http://localhost:3000",
-        receipt_email: email,
+        return_url: "https://super-duper-goldfish-gjrqrr4q9wpc9769-3000.app.github.dev",
       },
     });
 
