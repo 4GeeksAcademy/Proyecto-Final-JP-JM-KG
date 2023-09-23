@@ -82,7 +82,7 @@
 		"react-dom": "^16.8.4",
 		"react-multi-carousel": "^2.8.4",
 		"react-polyfills": "0.0.1",
-		"react-router-dom": "^6.3.0",
+		"react-router-dom": "^6.16.0",
 		"yup": "^1.2.0"
 	}
 }
