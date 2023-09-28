@@ -153,10 +153,16 @@ registerUser: async (formData) => {
 
 			login: async (email, password) => {
 				try {
+				  // Antes de realizar la solicitud
+				  console.log("Iniciando solicitud de inicio de sesión...");
+			  
 				  const response = await axios.post(`${process.env.BACKEND_URL}api/login`, {
 					email,
 					password
 				  });
+			  
+				  // Después de recibir una respuesta exitosa
+				  console.log("Solicitud exitosa:", response.data);
 			  
 				  const userData = response.data;
 			  
@@ -181,9 +187,14 @@ registerUser: async (formData) => {
 					isAdmin
 				  });
 			  
+				  // Antes de retornar true
+				  console.log("Inicio de sesión exitoso.");
+				  
 				  return true;
 				} catch (error) {
-				  
+				  // En caso de error
+				  console.error("Error durante el inicio de sesión:", error);
+			  
 				  return false;
 				}
 			  },

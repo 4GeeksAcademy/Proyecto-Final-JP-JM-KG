@@ -21,7 +21,7 @@ const getIsAdminFromLocalStorage = () => {
 export const Navbar = ({ setSeccionActiva }) => {
 
   const [isAdmin, setIsAdmin] = useState(getIsAdminFromLocalStorage());
-  const [forceUpdate, setForceUpdate] = useState(false); // Añade esta línea
+  const [forceUpdate, setForceUpdate] = useState(false);
 
   const { store, actions } = useContext(Context);
   const [showModal, setShowModal] = useState(false);
@@ -32,9 +32,13 @@ export const Navbar = ({ setSeccionActiva }) => {
   const [showCartDropdown, setShowCartDropdown] = useState(false);
   const [cart, setCart] = useState({ items: [], totalCost: 0 });
 
+  const handleLoginError = (errorMessage) => {
+    console.error(errorMessage);
+  };
+
   useEffect(() => {
     setIsAdmin(getIsAdminFromLocalStorage());
-  }, [forceUpdate]); // Agregar forceUpdate como dependencia
+  }, [forceUpdate]);
 
   useEffect(() => {
     setCart(store.cart);
@@ -60,12 +64,10 @@ export const Navbar = ({ setSeccionActiva }) => {
     setShowModal(false);
   };
 
-
-
   const handleSubmit = async (email, password) => {
     let logged = await actions.login(email, password);
     if (logged) {
-      setForceUpdate(!forceUpdate); // Forzar actualización
+      setForceUpdate(!forceUpdate);
       setSuccessMessage("Login exitoso, cerrando ventana...");
       setTimeout(() => {
         navigate('/');
@@ -77,7 +79,7 @@ export const Navbar = ({ setSeccionActiva }) => {
 
   const handleLogout = () => {
     actions.logout();
-    setForceUpdate(!forceUpdate); // Forzar actualización
+    setForceUpdate(!forceUpdate);
   };
 
   const welcomeMessage = store.email ? store.email.split("@")[0] : "";
@@ -94,12 +96,9 @@ export const Navbar = ({ setSeccionActiva }) => {
     actions.handleIncrement(order_id);
   };
 
-
   const handleDecrementNavbar = (order_id) => {
     actions.handleDecrement(order_id);
   };
-
-  
 
   const renderProfileIcon = () => {
     const initial = store.email ? store.email.charAt(0).toUpperCase() : '';
@@ -124,6 +123,7 @@ export const Navbar = ({ setSeccionActiva }) => {
       </Link>
     );
   };
+
   return (
     <>
       <nav className="navbar navbar-expand-lg navbar-light">
@@ -144,7 +144,6 @@ export const Navbar = ({ setSeccionActiva }) => {
                 className="btn-secondary"
                 onClick={store.isAuthenticated ? handleLogout : handleShowModal}
               >
-               
                 <span className="align-self-center">{store.isAuthenticated ? "Cerrar sesión" : "Iniciar sesión"}</span>
               </Button>
              
@@ -228,13 +227,14 @@ export const Navbar = ({ setSeccionActiva }) => {
           </div>
         </div>
       </nav>
-      <Login
+      <Login 
         showModal={showModal}
         handleCloseModal={handleCloseModal}
         handleSubmit={handleSubmit}
         successMessage={successMessage}
+        loginError={handleLoginError} 
+        
       />
-
     </>
   );
 };

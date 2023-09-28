@@ -6,7 +6,8 @@ import RegisterModal from './register';
 
 const Login = ({ showModal, handleCloseModal, handleSubmit, successMessage, loginError }) => {
   const [showRegisterModal, setShowRegisterModal] = useState(false);
-  const [showErrorMessage, setShowErrorMessage] = useState(false); // Estado para mostrar el mensaje de error
+  const [showErrorMessage, setShowErrorMessage] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleShowRegisterModal = () => {
     setShowRegisterModal(true);
@@ -29,24 +30,26 @@ const Login = ({ showModal, handleCloseModal, handleSubmit, successMessage, logi
     validationSchema: SignupSchema,
     onSubmit: async (values) => {
       try {
-        // Intenta realizar la solicitud de inicio de sesión
         await handleSubmit(values.email, values.password);
+        // Limpiar mensajes de error y éxito si la operación es exitosa
+        loginError('');
+        setErrorMessage('');
+        setShowErrorMessage(false);
       } catch (error) {
         if (error.response && error.response.status === 401) {
-          // Si la solicitud falla con un código 401, muestra el mensaje de error del servidor
           loginError(error.response.data.error);
         } else {
-          // Si ocurre otro tipo de error, muestra un mensaje genérico
           loginError('Error durante el inicio de sesión: Verifica tus credenciales e inténtalo nuevamente.');
         }
-
-        // Muestra el mensaje de error
+        setErrorMessage('Error en el intento de inicio de sesión. Comprueba tus credenciales.');
         setShowErrorMessage(true);
+
+        // Imprimir el mensaje de error directamente desde la variable error
+        console.log('Mensaje de error:', error.message);
       }
     },
   });
 
-  // Función para cerrar el mensaje de error
   const closeErrorMessage = () => {
     setShowErrorMessage(false);
   };
@@ -107,10 +110,10 @@ const Login = ({ showModal, handleCloseModal, handleSubmit, successMessage, logi
                 Crear cuenta
               </button>
             </div>
-            {successMessage && <p>{successMessage}</p>}
+            {successMessage && <p className='text-success'>{successMessage}</p>}
             {showErrorMessage && (
               <div className="alert alert-danger" role="alert">
-                Email o contraseña incorrectos. Por favor, verifica tus credenciales.
+                {errorMessage}
                 <button type="button" className="close" onClick={closeErrorMessage}>
                   <span aria-hidden="true">&times;</span>
                 </button>
