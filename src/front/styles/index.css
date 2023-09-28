@@ -40,12 +40,8 @@
 .nav-link.comentarios {
     border-right: none;
 }
-.icono-login{
-   text-decoration: none;
-}
-.login{
-    text-decoration: none;   
-}
+
+
 
 .card {
     position: relative;

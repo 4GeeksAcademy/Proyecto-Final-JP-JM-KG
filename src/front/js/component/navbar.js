@@ -9,7 +9,7 @@ import { Modal, Button } from "react-bootstrap";
 import "../../styles/cartDropdown.css";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faMinus } from '@fortawesome/free-solid-svg-icons';
-import RegisterModal from './register';
+
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 
@@ -25,7 +25,7 @@ export const Navbar = ({ setSeccionActiva }) => {
 
   const { store, actions } = useContext(Context);
   const [showModal, setShowModal] = useState(false);
-  const [showRegisterModal, setShowRegisterModal] = useState(false);
+  
   const [successMessage, setSuccessMessage] = useState("");
 
   let navigate = useNavigate();
@@ -60,13 +60,7 @@ export const Navbar = ({ setSeccionActiva }) => {
     setShowModal(false);
   };
 
-  const handleShowRegisterModal = () => {
-    setShowRegisterModal(true);
-  };
 
-  const handleCloseRegisterModal = () => {
-    setShowRegisterModal(false);
-  };
 
   const handleSubmit = async (email, password) => {
     let logged = await actions.login(email, password);
@@ -105,24 +99,7 @@ export const Navbar = ({ setSeccionActiva }) => {
     actions.handleDecrement(order_id);
   };
 
-  const SignupSchema = Yup.object().shape({
-    email: Yup.string().email('Invalid email').required('Required'),
-    password: Yup.string().min(8, 'Must be 8 characters or more').required('Required')
-  });
-
-  const formik = useFormik({
-    initialValues: {
-      email: '',
-      password: ''
-    },
-    validationSchema: SignupSchema,
-    onSubmit: values => {
-      alert(values.email);
-      //navigate('/');
-      //handleCloseModal();
-      handleSubmit(values.email, values.password)
-    },
-  });
+  
 
   const renderProfileIcon = () => {
     const initial = store.email ? store.email.charAt(0).toUpperCase() : '';
@@ -163,16 +140,14 @@ export const Navbar = ({ setSeccionActiva }) => {
                 {store.isAuthenticated && renderProfileIcon()}
               </div>
               <Button
-                variant="link"
-                className="login hoverEffect d-flex align-items-center justify-content-center"
+                variant="btn-light"
+                className="btn-secondary"
                 onClick={store.isAuthenticated ? handleLogout : handleShowModal}
               >
-                <img src={login} alt="login" className="icono-login align-self-center" width={30} />
-                <span className="align-self-center">{store.isAuthenticated ? "Cerrar sesión" : "Login"}</span>
+               
+                <span className="align-self-center">{store.isAuthenticated ? "Cerrar sesión" : "Iniciar sesión"}</span>
               </Button>
-              {!store.isAuthenticated && <Button variant="link" className="register hoverEffect d-flex align-items-center" onClick={handleShowRegisterModal}>
-                Register
-              </Button>}
+             
               {store.isAuthenticated &&
                 <div
                   className="cart-container"
@@ -259,7 +234,7 @@ export const Navbar = ({ setSeccionActiva }) => {
         handleSubmit={handleSubmit}
         successMessage={successMessage}
       />
-      <RegisterModal show={showRegisterModal} onHide={handleCloseRegisterModal} />
+
     </>
   );
 };
